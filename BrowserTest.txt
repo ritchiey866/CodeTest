@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Info</title>
+    <script>
+        function getBrowserInfo() {
+            var userAgent = navigator.userAgent;
+            var browserName = "Unknown";
+            var browserVersion = "Unknown";
+
+            if (userAgent.indexOf("Chrome") > -1) {
+                browserName = "Chrome";
+                browserVersion = userAgent.match(/Chrome\/(\d+\.\d+\.\d+\.\d+)/)[1];
+            } else if (userAgent.indexOf("Firefox") > -1) {
+                browserName = "Firefox";
+                browserVersion = userAgent.match(/Firefox\/(\d+\.\d+)/)[1];
+            } else if (userAgent.indexOf("Safari") > -1 && userAgent.indexOf("Chrome") === -1) {
+                browserName = "Safari";
+                browserVersion = userAgent.match(/Version\/(\d+\.\d+)/)[1];
+            } else if (userAgent.indexOf("MSIE") > -1 || userAgent.indexOf("Trident") > -1) {
+                browserName = "Internet Explorer";
+                browserVersion = userAgent.match(/(MSIE \d+\.\d+|rv:\d+\.\d+)/)[1];
+            } else if (userAgent.indexOf("Edge") > -1) {
+                browserName = "Edge";
+                browserVersion = userAgent.match(/Edge\/(\d+\.\d+)/)[1];
+            }
+
+            document.getElementById('browserInfo').innerText = `Browser: ${browserName}, Version: ${browserVersion}`;
+        }
+    </script>
+</head>
+<body onload="getBrowserInfo()">
+    <h3>Browser Information</h3>
+    <p id="browserInfo">Loading...</p>
+</body>
+</html>
