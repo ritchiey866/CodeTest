@@ -1,0 +1,31 @@
+Jabber EMO Page html 
+
+http://voiceportal.newyorklife.com/Jabber/Login/JabberEMProdGBS/${UserID}
+
+testLoginCheck()
+testLogout2()
+testLogout()
+
+testLoginCheck{
+deviceProfileQuery()
+testLogin()
+}
+
+deviceProfileQuery(){
+    url="http://voiceportal.newyorklife.com/Jabber/Login/call/json/EMSDeviceProfileQueryGBS?dvn=" + dvn;
+}
+
+testLogin(){
+	loginUrl = "http://voiceportal.newyorklife.com/Jabber/Login/call/json/EMSAPIProdLoginGBS?dvn=" + csf;
+}
+
+testLogout2(){
+	logoutUrl = "http://voiceportal.newyorklife.com/Jabber/Login/call/json/EMLogoutGBS?dvn=" + csf;
+}
+
+testLogin(){
+	loginUrl = "http://voiceportal.newyorklife.com/Jabber/Login/call/json/EMSAPIProdLoginGBS?dvn=" + csf;
+}
+
+
+
