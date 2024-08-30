@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="EN">
+<meta http-equiv="refresh" content="60">		
+<head>
+<style>
+.p2_label {
+	   	   width: 800px;
+}
+.blink {
+	animation: blinker 0.6s linear infinite;
+	color: red;
+	font-size: 16px;
+	font-family: "Times New Roman";
+}	
+	
+@keyframes blinker {
+   50% {
+	opacity: 0;
+   }
+}
+		
+</style>
+<meta charset="UTF-8">
+<meta name="viewport": content="width=device-width, initial-sacle=1.0">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="/Jabber/static/css/Jabber.css">
+</head>
+<script>
+var profileName = "";
+var defaultProfile = "";		
+$(document).ready(function () {
+	document.addEventListener('contextmenu', event => event.preventDefault());
+	//$("#btn_Logout").show();
+	//alert("Starts");   
+	//checking current login status
+	$("#beinglogin").hide();
+	$("#beinglogout").hide();
+	//document.getElementById("beinglogin").style.display = 'none';
+	//document.getElementById("beinglogout").style.display = 'none';   
+	testLogin2();
+});
+
+function changeBackgroundColorBlue() {
+	 //document.getElementById("btn_Login").style.backgroundColor = "lightblue";
+  };
+	
+  function changeBackgroundColorYellow() {
+	 //document.getElementById("btn_Login").style.backgroundColor = "red";
+	 //$("#btn_Login").text('Login'); 
+	 $("#btn_Logout").show();
+	 $("#btn_Login").hide();
+  };		
+
+
+
+function deviceProfileQuery(){
+	//alert("DeviceUserQuery");
+	profileName = "";
+	defaultProfile = "";		
+	
+	dvn = $('input[name=testcsfname]').val();
+	//dvn = "T15BB9J";	
+    url="http://voiceportal.newyorklife.com/Jabber/Login/call/json/EMSDeviceProfileQueryGBS?dvn=" + dvn;
+	//alert(url);
+	$.ajax({
+         type: 'Get',
+         url: url,
+         async: false,
+         success: function (data){	
+			 //alert("success");
+			 //alert(data);
+			 if (data["error"] == "noError"){
+				 //alert("No Error");
+		         mvalue = data["ProfileName"];
+			     mvalue = "profile name:" + mvalue;
+			     mvalue =  mvalue + ", isUDP: " + data["isUDP"];
+			     $("label[for='devProfile']").html(mvalue);
+			     profileName = data["ProfileName"];
+			     defaultProfile = data["isUDP"];}
+			 else {
+				  $("label[for='devProfile']").html(data["error"]);
+		     }
+         },
+		 error: function(xhr, ajaxOptions, thrownError){
+			        //alert("Error");
+                    //alert(xhr.status);
+			        $("label[for='devProfile']").html(xhr.status);
+                },
+	});
+}
+
+async function testLogin(){
+	//alert("test login");
+	//$("label[for='usrmsg']").html("You are being logged in");	
+	//$("label[for='usrmsg']").html("You are being logged in");		
+	document.getElementById("beinglogin").style.display = 'block';
+    document.getElementById("postURL1").style.display = 'none';   
+	
+	
+    //document.getElementById("btn_login").disabled = true;
+	parse = new DOMParser();
+	//alert("test login");
+	var csf = $('input[name=csfname]').val();
+    $("label[for='testLogout']").html("");
+	//csf = "T15BU9J";
+	jcsf = "CSF"+csf;
+	loginUrl = "http://voiceportal.newyorklife.com/Jabber/Login/call/json/EMSAPIProdLoginGBS?dvn=" + csf;
+	const res = await fetch(loginUrl);	
+	if (res.ok) {
+	    const data = await res.json();			
+	    if (data != null) {
+		    mvalue = data["loginStatus"];		
+			
+			 if (mvalue!=null) {
+				 $("label[for='usrmsg']").html(mvalue);
+				 if (data["logoutb"] == "Yes")
+				 {
+                    $("#btn_Logout").show();
+	         	    $("#btn_Login").hide();
+				 };	
+				 if (data["logoutb"] == "No")	 
+				 {
+					$("#beinglogin").hide();
+				    $("#postURL1").show();					 
+                    $("#btn_Logout").hide();
+	         	    $("#btn_Login").show();
+				 };					 
+
+			 }
+			 else {
+				 //$("label[for='testLogin']").html("success, wait for loading");
+             setTimeout(function (){
+            // Something you want delayed.
+				$("label[for='usrmsg']").html("You are now logged in ");				
+				 $("#btn_Logout").show();
+	         	 $("#btn_Login").hide();
+	             $("#beinglogin").hide();				 
+				 $("#postURL1").show();
+				 
+				 
+			    //document.getElementById("btn_pageLogin").style.backgroundColor = "blue";
+                }, 7000); // How long you want the delay to be, measured in milliseconds.				 
+				 
+				 
+				 //$("label[for='usrmsg']").html("You are now logged in 3");
+			     //$("#btn_Logout").show();
+	         	 //$("#btn_Login").hide();
+			 }
+			
+		}
+		else {
+				 $("label[for='usrmsg']").html("Network error, please contact support");			
+		}
+		
+		
+	}
+	else {
+                $("label[for='usrmsg']").html("Network error, please contact support");					
+	}	;	
+}
+
+function testLogin2(){
+	//alert("Test Login2");
+	dvn = $('input[name=testcsfname]').val();
+	//alert(dvn);
+	//dvn = "T15BB9J";
+    url="http://voiceportal.newyorklife.com/Jabber/Login/call/json/EMUserDeviceQueryGBS?dvn=" + dvn;
+	//alert(url);
+	$.ajax({
+         type: 'Get',
+         url: url,
+         async: false,
+         success: function (data){	
+			 //alert("success");
+			 mvalue = "device name: " + data["deviceName"];
+			 //$("label[for='devName']").html(mvalue);
+			 //alert(mvalue.indexOf('CSF'));
+			 
+			 if (mvalue.indexOf('CSF') > -1) {
+				 //changeBackgroundColorYellow();
+				 $("#btn_Login").text('Login'); 
+                 $("#btn_Logout").show();
+		         $("#btn_Login").hide();
+				 $('input[name=postURL]').val("You are currently logged in");
+				 $("label[for='usrmsg']").html("You are currently logged in");
+				 $("beinglogin").hide();
+			 }
+			 else {
+				$("#btn_Logout").hide();
+		        $("#btn_Login").show();
+				$('input[name=postURL]').val("You are not logged in"); 
+			    $("label[for='usrmsg']").html("You are not logged in");
+			 } 	 ;
+			 //ert(data);
+			 //msgtext = "Logout command executed";
+			 //$('input[name=postURL]').val(data["isUDP");
+	         //$("#btn_Logout").hide();
+		     //$("#btn_Login").show();
+         },
+		 error: function(xhr, ajaxOptions, thrownError){
+			        //alert("Error");
+			 		$("label[for='devName']").html(xhr.status);
+ 				    $('input[name=postURL]').val("Network error , please reload or call Voice Admin"); 
+			        $("label[for='usrmsg']").html("Network error, please reload or call Voice Admin");    				 
+                    
+                },
+	});
+	//alert("in Check Profile");
+}
+function testLoginCheck(){
+deviceProfileQuery();
+//alert("profile:"+ profileName);
+//alert("isDefaultProfile:" + defaultProfile);
+//$("label[for='testLoginCheck']").html(profileName);	
+	if ((profileName.length  > 0) && (defaultProfile =='t')){
+		testLogin();
+	}
+	else {
+	if ((profileName.length  > 0) && (defaultProfile !='t')){
+       //$("label[for='testLoginCheck']").html(profileName);			
+	   errorMessage = "Default profile not selected, please contact support";
+	   $("label[for='usrmsg']").html(errorMessage);
+	};
+
+	if (profileName.length == 0)  {
+	   $("label[for='usrmsg']").html("EM profile not defined, please contact support");
+       //$("label[for='testLoginCheck']").html("EM profile not defined");			
+	};
+	}
+}		
+
+async function testLogout2(){
+	//alert("test login");
+	$("label[for='usrmsg']").html("You are being logged out");	
+	$("#beinglogout").show();				 
+	$("#postURL1").hide();
+	parse = new DOMParser();
+	//alert("test login");
+	var csf = $('input[name=csfname]').val();
+	//csf = "T15BU9J";
+	jcsf = "CSF"+csf;
+	logoutUrl = "http://voiceportal.newyorklife.com/Jabber/Login/call/json/EMLogoutGBS?dvn=" + csf;
+    //alert(logoutUrl);
+	
+	const res = await fetch(logoutUrl);		
+	if (res.ok) {
+	    const data = await res.json();				
+            setTimeout(function (){
+            // Something you want delayed.
+			$("label[for='usrmsg']").html("You are now logged out ");				
+			$("#btn_Logout").hide();
+			$("#btn_Login").show();
+	        $("#beinglogout").hide();				 
+			$("#postURL1").show();
+				
+	        //$("#btn_login").prop('disabled', false);				 
+			//document.getElementById("btn_pageLogin").style.backgroundColor = "blue";
+            }, 8000); // How long you want the delay to be, measured in milliseconds.				 
+				 		
+		
+		
+		//$("label[for='usrmsg']").html("You are now logged out");	
+	}
+	else {
+		$("label[for='usrmsg']").html("Logout error, please contact support");	
+	}
+}
+		
+	
+</script>
+	<body>
+		<div style="height:110px">
+			<img src="/Jabber/static/images/NYL_300x300.png" alt="NYL Logo" width="100" height="100"/>
+
+		</div>
+<div id="pageTop" >
+	
+				<!--<button class="rounded-button-title" id="btn_pageBottom" type="button" onclick="DivTop();">Page 1</button>	-->
+		<div>
+			<h3>
+				<bold>Extension Mobility</bold>
+			</h3>
+<p>
+	
+	Login to enable Extension Mobility Profile</p>
+<!--			<p>
+				Subtitle
+			</p> --><br>
+			<input type="text" id="csfname" name="csfname" placeholder="Enter ACF2 ID"  value="{{=usr}}" style="outline:none;!important;" readonly><br>
+			<!--<button class="rounded-button" name="sLogin" type="submit">Login-->
+			<button class="rounded-button" id="btn_Login" type="button" style="display:none; outline: none !important;" onclick="testLoginCheck();">Login</button>
+			<button class="rounded-button" id="btn_Logout" type="button" style="display:none;outline: none !important;" onclick="testLogout2();">Logout</button>
+			<button class="rounded-button" id="btn_Status" type="button" style="display:none;outline: none !important;" onclick="testLogout();">Executing</button>
+		</div>
+	<input type="hidden"  name="postURL" id="postURL" style="border-radius: 0px;	border: 0px solid black;background-color: white;width:600px">
+	<label for="usrmsg" name="postURL1" id="postURL1"></label>
+	<label for="beinglogin" name="beinglogin" id="beinglogin" class="blink" hidden>You are being logged in</label>
+	<label for="beinglogout" name="beinglogout" id="beinglogout" class="blink" hidden>You are being logged out</label>
+		
+		</div>
+		<!-- <hr> -->
+		<div id="pageBottom" hidden>
+			<input type="text" id="testcsfname" name="testcsfname" placeholder="ACF2 ID" value="{{=usr}}" ><br>
+
+		</div>
+	</body>
+</html>
